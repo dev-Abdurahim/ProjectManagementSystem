@@ -1,0 +1,15 @@
+package org.example.projectmanagementsystem.exception;
+
+public enum ErrorCode {
+    PROJECT_NOT_FOUND,
+    INVALID_PROJECT_TYPE,
+    VALIDATION_ERROR,
+    BUSINESS_RULE_VIOLATION,
+    USERNAME_ALREADY_EXISTS,
+    USER_NOT_FOUND,
+    INVALID_CREDENTIALS,
+    BAD_REQUEST,
+    INTERNAL_SERVER_ERROR,
+    ACCESS_DENIED,
+    UNAUTHORIZED
+}

@@ -1,0 +1,51 @@
+databaseChangeLog:
+  - changeSet:
+      id: 04-create-kpi-goals
+      author: Abdurahim
+      changes:
+        - createTable:
+            tableName: kpi_goals
+            columns:
+
+              - column:
+                  name: id
+                  type: BIGSERIAL
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+
+              - column:
+                  name: created_at
+                  type: DATE
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: updated_at
+                  type: DATE
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: deleted
+                  type: BOOLEAN
+                  defaultValueBoolean: false
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: year
+                  type: INTEGER
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: target_revenue
+                  type: DECIMAL(15,2)
+                  constraints:
+                    nullable: false
+
+        - addUniqueConstraint:
+            tableName: kpi_goals
+            columnNames: year
+            constraintName: uk_kpi_year
