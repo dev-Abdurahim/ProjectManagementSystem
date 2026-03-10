@@ -7,7 +7,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
-import java.time.YearMonth;
 
 @Data
 @Builder
@@ -16,8 +15,8 @@ import java.time.YearMonth;
 public class MonthlyAllocationDto {
 
     @Schema(description = "Oy va yil", example = "2025-04")
-    private YearMonth monthYear;
+    private String monthYear;
 
-    @Schema(description = "Shu oy uchun rejalashtirilgan miqdor", example = "16666.67")
+    @Schema(description = "Shu oy uchun projectni umumiy miqdor", example = "16666.67")
     private BigDecimal amount;
 }
