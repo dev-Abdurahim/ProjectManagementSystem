@@ -2,7 +2,7 @@ package org.example.projectmanagementsystem.util;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
-import org.example.projectmanagementsystem.config.UserDetailsImpl;
+import org.example.projectmanagementsystem.config.securty.UserDetailsImpl;
 import org.example.projectmanagementsystem.entity.User;
 import org.example.projectmanagementsystem.enums.UserRole;
 import org.springframework.security.core.Authentication;

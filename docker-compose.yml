@@ -1,0 +1,16 @@
+services:
+  redis:
+    image: redis:7                    # Redis 7 versiyasi
+    container_name: redis             # Container nomi
+    ports:
+      - "6379:6379"                   # Host:Container port
+    volumes:
+      - redis-data:/data              # Ma'lumotlarni diskka saqlash (RDB uchun)
+    command: >
+      redis-server
+      --save 60 1                     
+      --loglevel warning
+    restart: unless-stopped           # Docker restart bo'lsa Redis ham qayta ishga tushsin
+
+volumes:
+  redis-data:                         # Named volume — Docker o'zi boshqaradi

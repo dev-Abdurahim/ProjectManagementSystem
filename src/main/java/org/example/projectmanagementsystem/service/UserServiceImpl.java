@@ -1,7 +1,7 @@
 package org.example.projectmanagementsystem.service;
 
 import lombok.RequiredArgsConstructor;
-import org.example.projectmanagementsystem.config.UserDetailsImpl;
+import org.example.projectmanagementsystem.config.securty.UserDetailsImpl;
 import org.example.projectmanagementsystem.config.jwt.JwtService;
 import org.example.projectmanagementsystem.dto.request.LoginRequest;
 import org.example.projectmanagementsystem.dto.request.RegisterRequest;
@@ -19,8 +19,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
-
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
@@ -29,6 +27,7 @@ public class UserServiceImpl implements UserService {
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
     private final JwtService jwtService;
+    private final RefreshTokenService refreshTokenService;
 
 
     @Override
@@ -65,6 +64,8 @@ public class UserServiceImpl implements UserService {
             String accessToken = jwtService.generateAccessToken(userDetails);
             String refreshToken = jwtService.generateRefreshToken(userDetails);
 
+            refreshTokenService.saveRefreshToken(userDetails.getUsername(), refreshToken);
+
             return AuthResponse.builder()
                     .accessToken(accessToken)
                     .refreshToken(refreshToken)
@@ -93,5 +94,11 @@ public class UserServiceImpl implements UserService {
 
         userRepository.save(user);
         return "Role successfully assigned: " + role.name();
+    }
+
+    @Override
+    public String logout(String username) {
+         refreshTokenService.deleteRefreshToken(username);
+         return "Successfully logged out";
     }
 }

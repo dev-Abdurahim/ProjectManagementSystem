@@ -14,4 +14,6 @@ public interface UserService {
     AuthResponse login(LoginRequest request);
 
     String assignRole(Long userId, UserRole role);
+
+    String logout(String username);
 }

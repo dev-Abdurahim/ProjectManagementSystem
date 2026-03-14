@@ -9,9 +9,12 @@ import org.example.projectmanagementsystem.dto.request.RegisterRequest;
 import org.example.projectmanagementsystem.dto.response.AuthResponse;
 import org.example.projectmanagementsystem.enums.UserRole;
 import org.example.projectmanagementsystem.service.temp.UserService;
+import org.example.projectmanagementsystem.util.SecurityUtils;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+
+import java.nio.file.AccessDeniedException;
 
 @Tag(name = "Auth", description = "Autentifikatsiya va rol boshqaruvi")
 @RestController
@@ -38,5 +41,14 @@ public class AuthController {
     @PatchMapping("/users/{id}/role")
     public ResponseEntity<String> assignRole(@PathVariable Long id, @RequestParam UserRole role){
         return ResponseEntity.ok(userService.assignRole(id,role));
+    }
+
+
+    @Operation(summary = "Tizimdan chiqish")
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER', 'PM')")
+    @PostMapping("/logout")
+    public ResponseEntity<String> logout() throws AccessDeniedException {
+        String username = SecurityUtils.getCurrentUsername();
+        return ResponseEntity.ok(userService.logout(username));
     }
 }

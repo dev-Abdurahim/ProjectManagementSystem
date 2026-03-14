@@ -1,4 +1,4 @@
-package org.example.projectmanagementsystem.config;
+package org.example.projectmanagementsystem.config.securty;
 
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;

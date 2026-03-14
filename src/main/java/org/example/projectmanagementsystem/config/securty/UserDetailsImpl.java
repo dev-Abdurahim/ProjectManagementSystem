@@ -1,4 +1,4 @@
-package org.example.projectmanagementsystem.config;
+package org.example.projectmanagementsystem.config.securty;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
