@@ -2,6 +2,7 @@ package org.example.projectmanagementsystem.config.securty;
 
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.example.projectmanagementsystem.config.RateLimitFilter;
 import org.example.projectmanagementsystem.config.jwt.JwtAuthenticationFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -28,6 +29,8 @@ public class SecurityConfig {
 
     private final JwtAuthenticationFilter jwtFilter;
     private final UserDetailsService userDetailsService;
+    private final RateLimitFilter rateLimitFilter;
+    private final SecurityErrorResponder errorResponder;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception{
@@ -36,39 +39,14 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/**", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
                         .anyRequest().authenticated())
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .sessionManagement(session -> session
+                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(authenticationProvider())
-                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
-
+                .addFilterBefore(rateLimitFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterAfter(jwtFilter, RateLimitFilter.class)
                 .exceptionHandling(ex -> ex
-                        .authenticationEntryPoint((request, response, authException) -> {
-                        response.setContentType("application/json;charset=UTF-8");
-                        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                        response.getWriter().write("""
-                                {
-                                    "timestamp": "%s",
-                                    "status": 401,
-                                    "error": "UNAUTHORIZED",
-                                    "message": "Tizimga kirish talab etiladi",
-                                    "path": "%s"
-                                }
-                                """.formatted(LocalDateTime.now(),request.getRequestURI()));
-                        })
-
-                        .accessDeniedHandler((request, response, accessDeniedException) -> {
-                            response.setContentType("application/json;charset=UTF-8");
-                            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-                            response.getWriter().write("""
-                                     {
-                                         "timestamp": "%s",
-                                         "status": 403,
-                                         "error": "ACCESS_DENIED",
-                                         "message": "Bu amalni bajarish uchun huquqingiz yetarli emas",
-                                         "path": "%s"
-                                     }
-                                    
-                                    """.formatted(LocalDateTime.now(), request.getRequestURI()));
-                        })
+                        .authenticationEntryPoint(errorResponder::sendUnauthorized)
+                        .accessDeniedHandler((req, res, e) -> errorResponder.sendAccessDenied(req,res))
 
                 );
 
